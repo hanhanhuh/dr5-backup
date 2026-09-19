@@ -1,0 +1,25 @@
+[project]
+name = "dr5-backup"
+version = "0.1.0"
+description = "Automated, no-front-panel backup/restore for the Boss DR-5 drum machine over MIDI"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Jan Luhmann" },
+]
+dependencies = [
+    "mido>=1.3",
+    "python-rtmidi>=1.5",
+]
+
+[project.scripts]
+dr5-backup = "dr5_backup:main"
+dr5-restore = "dr5_restore:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+py-modules = ["dr5_sysex", "dr5_backup", "dr5_restore"]
