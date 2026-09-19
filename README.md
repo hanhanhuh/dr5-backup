@@ -16,8 +16,10 @@ docstrings (`dr5_backup.py`, `dr5_restore.py`, `dr5_sysex.py`).
 - `dr5-restore` — sends a previously-saved `.syx` file back to the
   DR-5.
 
-Both talk directly to the DR-5 over MIDI — connect a MIDI interface in
-both directions (In and Out).
+**Both MIDI In and MIDI Out must be connected between your computer and
+the DR-5** — In to receive the backup data, Out to send the priming and
+request messages. A single one-directional MIDI cable is not enough
+for either command.
 
 **Scope**: this backs up pattern/sequence data only (address region
 `20 00 00`), not kit names, system settings, or songs outside that
