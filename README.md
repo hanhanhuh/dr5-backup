@@ -34,17 +34,17 @@ uv sync
 ## Usage
 
 ```bash
-# find your MIDI port name
-uv run python -c "import mido; print(mido.get_input_names())"
-
 # back up (writes dr5_backup_<timestamp>.syx by default)
-uv run dr5-backup --port "your port name here"
+uv run dr5-backup
 
 # restore
-uv run dr5-restore dr5_backup_20250101_120000.syx --port "your port name here"
+uv run dr5-restore dr5_backup_20250101_120000.syx
 ```
 
-`--port` is required for both commands.
+`--port` is optional. If there's only one MIDI port available for both
+input and output, it's used automatically; with more than one, you'll
+be prompted to pick. Pass `--port "name"` to skip the prompt (useful
+for scripting).
 
 ## Development
 
