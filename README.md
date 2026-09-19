@@ -6,8 +6,8 @@ MIDI, without needing Dr5Edit or any Windows software.
 The DR-5 Owner's Manual states that MIDI bulk dumps require front-panel
 operation to arm. In practice, requesting the data over MIDI (a plain
 Roland RQ1 message) is enough — no front-panel arming needed. Details
-and the exact byte sequence are documented in the scripts' own
-docstrings (`dr5_backup.py`, `dr5_restore.py`, `dr5_sysex.py`).
+and the exact byte sequence are documented in the package's own
+docstrings (`src/dr5_backup/`).
 
 ## What it does
 
@@ -54,6 +54,15 @@ uv run pre-commit install
 ```
 
 Runs `ruff` (lint + format) and `mypy` (strict) on every commit.
+
+```bash
+uv run pytest
+```
+
+Tests cover the pure protocol-framing logic (`tests/test_protocol.py`)
+and the backup/restore orchestration logic against a fake MIDI
+transport (`tests/test_backup.py`, `tests/test_restore.py`) — no real
+DR-5 hardware needed to run them.
 
 ## License
 

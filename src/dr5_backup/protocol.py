@@ -30,24 +30,70 @@ SIZE_SEQUENCE_DATA = bytes([0x01, 0x00, 0x00])
 
 
 def checksum(payload: bytes) -> int:
-    """Roland checksum: (-sum(payload)) & 0x7F."""
+    """Compute the Roland one-way-transfer checksum for a message body.
+
+    Args:
+        payload: The address + size (or address + data) bytes the
+            checksum is computed over, not including F0/F7 framing or
+            the manufacturer/device/model/command header.
+
+    Returns:
+        The checksum byte, in range 0-127.
+    """
     return (-sum(payload)) & 0x7F
 
 
 def build_rq1(address: bytes, size: bytes) -> bytes:
-    """Build an RQ1 (request data) message payload (no F0/F7 -- mido adds those)."""
+    """Build an RQ1 (request data) message payload.
+
+    Args:
+        address: 3-byte Roland address field identifying where the
+            requested data starts.
+        size: 3-byte field identifying the address range being
+            requested (per the Owner's Manual, this represents an
+            address span, not a literal byte count).
+
+    Returns:
+        The message payload including the manufacturer/device/model/
+        command header and trailing checksum, but not the F0/F7
+        framing (mido adds that when sending a 'sysex' message).
+    """
     body = address + size
     return bytes([MANUFACTURER_ID, DEVICE_ID, MODEL_ID, CMD_RQ1]) + body + bytes([checksum(body)])
 
 
 def build_dt1(address: bytes, data: bytes) -> bytes:
-    """Build a DT1 (data set) message payload (no F0/F7 -- mido adds those)."""
+    """Build a DT1 (data set) message payload.
+
+    Args:
+        address: 3-byte Roland address field identifying where to
+            write ``data``.
+        data: The raw bytes to write starting at ``address``.
+
+    Returns:
+        The message payload including the manufacturer/device/model/
+        command header and trailing checksum, but not the F0/F7
+        framing (mido adds that when sending a 'sysex' message).
+    """
     body = address + data
     return bytes([MANUFACTURER_ID, DEVICE_ID, MODEL_ID, CMD_DT1]) + body + bytes([checksum(body)])
 
 
 def parse_blocks(data: bytes) -> list[bytes]:
-    """Split a raw .syx capture into individual F0...F7 blocks (each including F0/F7)."""
+    """Split a raw .syx capture into individual SysEx blocks.
+
+    Args:
+        data: Raw bytes of a .syx file, expected to be a concatenation
+            of zero or more F0...F7 messages with no gaps between them.
+
+    Returns:
+        A list of blocks, each including its own leading F0 and
+        trailing F7 byte, in the order they appear in ``data``.
+
+    Raises:
+        ValueError: If a block doesn't start with F0, or the final
+            block is missing its closing F7.
+    """
     blocks = []
     i, n = 0, len(data)
     while i < n:

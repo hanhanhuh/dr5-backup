@@ -14,13 +14,14 @@ dependencies = [
 ]
 
 [project.scripts]
-dr5-backup = "dr5_backup:main"
-dr5-restore = "dr5_restore:main"
+dr5-backup = "dr5_backup.cli:backup_main"
+dr5-restore = "dr5_backup.cli:restore_main"
 
 [dependency-groups]
 dev = [
     "mypy>=1.14",
     "pre-commit>=4.0",
+    "pytest>=8.0",
     "ruff>=0.8",
 ]
 
@@ -29,7 +30,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-py-modules = ["dr5_sysex", "dr5_backup", "dr5_restore"]
+packages = ["src/dr5_backup"]
 
 [tool.ruff]
 target-version = "py311"
@@ -37,21 +38,44 @@ line-length = 110
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "UP",  # pyupgrade
-    "B",   # flake8-bugbear
-    "SIM", # flake8-simplify
-    "C4",  # flake8-comprehensions
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+    "D",    # pydocstyle (Google convention, enforces the docstrings we just wrote)
+    "ANN",  # flake8-annotations (require type hints, backs up mypy --strict)
+    "S",    # flake8-bandit (basic security lint)
+    "RUF",  # ruff-specific rules
+    "PTH",  # flake8-use-pathlib (no os.path)
+    "RET",  # flake8-return (unnecessary else/elif after return, etc.)
+    "ARG",  # flake8-unused-arguments
 ]
+ignore = [
+    "D203", # conflicts with D211 (no-blank-line-before-class vs one-blank-line)
+    "D213", # conflicts with D212 (multi-line summary position)
+    "D105", # magic methods (__enter__, __exit__, ...) don't need docstrings
+    "D107", # __init__ docstring redundant when the class docstring documents construction
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "D", "ANN", "ARG"]  # assert is fine in tests; tests/fakes don't need full docstrings/annotations/unused-arg checks
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
 warn_unreachable = true
+mypy_path = "src"
 
 [[tool.mypy.overrides]]
 module = "mido.*"
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
