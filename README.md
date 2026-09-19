@@ -46,6 +46,15 @@ uv run dr5-restore dr5_backup_20250101_120000.syx --port "your port name here"
 
 `--port` is required for both commands.
 
+## Development
+
+```bash
+uv sync --group dev
+uv run pre-commit install
+```
+
+Runs `ruff` (lint + format) and `mypy` (strict) on every commit.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

@@ -4,6 +4,7 @@ Roland's F0 41 DT1/RQ1 one-way-transfer framing, per the DR-5 Owner's
 Manual's MIDI Implementation section (Roland Exclusive Messages,
 Section 1-3).
 """
+
 from __future__ import annotations
 
 MANUFACTURER_ID = 0x41
@@ -57,6 +58,6 @@ def parse_blocks(data: bytes) -> list[bytes]:
             j += 1
         if j >= n:
             raise ValueError(f"unterminated block starting at offset {i}")
-        blocks.append(data[i:j + 1])
+        blocks.append(data[i : j + 1])
         i = j + 1
     return blocks

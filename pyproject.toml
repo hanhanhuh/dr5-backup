@@ -17,9 +17,41 @@ dependencies = [
 dr5-backup = "dr5_backup:main"
 dr5-restore = "dr5_restore:main"
 
+[dependency-groups]
+dev = [
+    "mypy>=1.14",
+    "pre-commit>=4.0",
+    "ruff>=0.8",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 py-modules = ["dr5_sysex", "dr5_backup", "dr5_restore"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 110
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "mido.*"
+ignore_missing_imports = true

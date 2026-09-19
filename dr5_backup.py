@@ -10,6 +10,7 @@ Dr5Edit Download over an ALSA sequencer tap; see dr5_sysex.py for the
 byte-level details. No front-panel arming is needed, despite the Owner's
 Manual stating bulk dumps require panel operation.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -86,23 +87,36 @@ def backup(port: str, outfile: str, quiet_timeout: float, max_duration: float) -
         print("ERROR: no data received -- check MIDI connections and --port.", file=sys.stderr)
         return 1
     if len(buf) < MIN_EXPECTED_BYTES:
-        print(f"WARNING: only {len(buf)} bytes received, expected at least "
-              f"{MIN_EXPECTED_BYTES} for a full Sequence-data dump -- the "
-              "transfer may have been interrupted. Saved anyway; inspect "
-              "before trusting this backup.", file=sys.stderr)
+        print(
+            f"WARNING: only {len(buf)} bytes received, expected at least "
+            f"{MIN_EXPECTED_BYTES} for a full Sequence-data dump -- the "
+            "transfer may have been interrupted. Saved anyway; inspect "
+            "before trusting this backup.",
+            file=sys.stderr,
+        )
         return 1
     return 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("outfile", nargs="?", default=None,
-                         help="output .syx path (default: dr5_backup_<timestamp>.syx)")
-    parser.add_argument("--port", required=True,
-                         help="MIDI port name (both directions); list available ports with "
-                              "`python -c \"import mido; print(mido.get_input_names())\"`")
-    parser.add_argument("--quiet-timeout", type=float, default=3.0,
-                         help="seconds of silence after which the transfer is considered done")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "outfile", nargs="?", default=None, help="output .syx path (default: dr5_backup_<timestamp>.syx)"
+    )
+    parser.add_argument(
+        "--port",
+        required=True,
+        help="MIDI port name (both directions); list available ports with "
+        '`python -c "import mido; print(mido.get_input_names())"`',
+    )
+    parser.add_argument(
+        "--quiet-timeout",
+        type=float,
+        default=3.0,
+        help="seconds of silence after which the transfer is considered done",
+    )
     parser.add_argument("--max-duration", type=float, default=60.0, help="hard timeout in seconds")
     args = parser.parse_args()
 

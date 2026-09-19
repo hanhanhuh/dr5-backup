@@ -10,6 +10,7 @@ ALSA sequencer tap; see dr5_sysex.py for the byte-level details. The
 MIDI-Thru-off priming step and the ~3ms inter-message pacing are both
 required -- without them the DR-5 gets stuck on its "RxSys" screen.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -45,17 +46,23 @@ def restore(port: str, infile: str) -> int:
             time.sleep(0.003)
 
     print(f"Done. Sent {len(blocks)} blocks.", file=sys.stderr)
-    print("NOTE: MIDI Thru left OFF -- reset manually if needed "
-          "(Utility mode > System Setup).", file=sys.stderr)
+    print(
+        "NOTE: MIDI Thru left OFF -- reset manually if needed (Utility mode > System Setup).", file=sys.stderr
+    )
     return 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("infile", help="path to a .syx backup previously made by dr5-backup")
-    parser.add_argument("--port", required=True,
-                         help="MIDI port name (both directions); list available ports with "
-                              "`python -c \"import mido; print(mido.get_input_names())\"`")
+    parser.add_argument(
+        "--port",
+        required=True,
+        help="MIDI port name (both directions); list available ports with "
+        '`python -c "import mido; print(mido.get_input_names())"`',
+    )
     args = parser.parse_args()
     return restore(args.port, args.infile)
 
